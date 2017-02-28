@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<!-- BEGIN PAGE LEVEL STYLES -->
+<link href="{% static 'pages/css/pricing.min.css' %}" rel="stylesheet" type="text/css" />
+<!-- END PAGE LEVEL STYLES -->
+{% endblock %}
+
+
+{% block content %}
+<!-- BEGIN PAGE CONTENT INNER -->
+    <div class="page-content-inner">
+        <div class="portlet light portlet-fit ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-share font-green"></i>
+                    <span class="caption-subject font-green bold uppercase">CHOOSE YOUR PRICING</span>
+                </div>
+                
+            </div>
+            <div class="portlet-body">
+                {% if price > 0 %}
+
+                <div class="pricing-content-1">
+                    <div class="note note-info note-bordered">
+		            <p>
+		                <a href="javascript:;" target="_blank"> Thank you for using our app!
+		        </div>
+                </div>
+                {% else %}
+                <div class="pricing-content-1">
+                    <div class="alert alert-danger">
+				    <button class="close" data-dismiss="alert"></button> Please make sure your email for stripe should be same as the email for your account. </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="price-column-container border-active">
+                                <div class="price-table-head bg-blue">
+                                    <h2 class="no-margin">BASIC</h2>
+                                </div>
+                                <div class="arrow-down border-top-blue"></div>
+                                <div class="price-table-pricing">
+                                    <h3>
+                                        <sup class="price-sign">$</sup>29</h3>
+                                    <p>per month</p>
+                                </div>
+                                <div class="price-table-content" style="min-height: 150px;">
+                                    
+                                </div>
+                                <div class="arrow-down arrow-grey"></div>
+                                <div class="price-table-footer">
+                                    <a href="javascript: pay_now(29)" class="btn grey-salsa btn-outline sbold uppercase price-button">Setup</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="price-column-container border-active">
+                                <div class="price-table-head bg-green">
+                                    <h2 class="no-margin">MOST POPULAR</h2>
+                                </div>
+                                <div class="arrow-down border-top-green"></div>
+                                <div class="price-table-pricing">
+                                    <h3>
+                                        <sup class="price-sign">$</sup>89</h3>
+                                    <p>per month</p>
+                                    <div class="price-ribbon">Popular</div>
+                                </div>
+                                <div class="price-table-content">
+                                    <div class="row mobile-padding">
+                                        <div class="col-xs-3 text-right mobile-padding">
+                                            <i class="icon-user-follow"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-left mobile-padding">5,000+ Facebook Users <br/>Reached</div>
+                                    </div>
+                                    <div class="row mobile-padding">
+                                        <div class="col-xs-3 text-right mobile-padding">
+                                            <i class="icon-drawer"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-left mobile-padding">Views from people within<br/>
+1-5 miles</div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="arrow-down arrow-grey"></div>
+                                <div class="price-table-footer">
+                                    <a href="javascript: pay_now(89)" class="btn green price-button sbold uppercase">Setup</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="price-column-container border-active">
+                                <div class="price-table-head bg-red">
+                                    <h2 class="no-margin">PREMIER</h2>
+                                </div>
+                                <div class="arrow-down border-top-red"></div>
+                                <div class="price-table-pricing">
+                                    <h3>
+                                        <sup class="price-sign">$</sup>129</h3>
+                                    <p>per month</p>
+                                </div>
+                                <div class="price-table-content">
+                                    <div class="row mobile-padding">
+                                        <div class="col-xs-3 text-right mobile-padding">
+                                            <i class="icon-user"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-left mobile-padding">15,000+ Facebook Users<br/> Reached</div>
+                                    </div>
+                                    <div class="row mobile-padding">
+                                        <div class="col-xs-3 text-right mobile-padding">
+                                            <i class="icon-drawer"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-left mobile-padding">Views from people within<br/>
+1-5 miles</div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="arrow-down arrow-grey"></div>
+                                <div class="price-table-footer">
+                                    <a href="javascript: pay_now(129)" class="btn grey-salsa btn-outline price-button sbold uppercase">Setup</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- END PAGE CONTENT INNER -->
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="https://checkout.stripe.com/checkout.js"></script>
+
+<script type="text/javascript">
+    var price;
+    var handler = StripeCheckout.configure({
+        key: '{{ stripe_pk }}',
+        locale: 'auto',
+        token: function(token) {
+          window.location.href = "{% url 'setup_info' %}?token=" + token.id + "&price=" + price
+        }
+      });
+
+    function pay_now(amount){
+        price = amount
+
+        handler.open({
+          name: "Seller: {{request.session.user.name}}",
+          description: "Pay for {{ event.title }}",
+          currency: "usd",
+          amount: amount * 100
+        });
+    }
+</script>
+{% endblock %}
